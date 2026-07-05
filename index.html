@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>實務工具櫥窗</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&family=Courier+Prime:wght@400;700&display=swap');
+
+  :root {
+    --ink: #1B3A2F;
+    --ink-light: #2D5443;
+    --clay: #C8704A;
+    --clay-dark: #A8542F;
+    --paper: #F5F1E8;
+    --paper-line: #E3DCC8;
+    --seal: #A8362C;
+    --muted: #6B6357;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  .wrap {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .masthead {
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 22px;
+    margin-bottom: 36px;
+  }
+
+  .masthead-eyebrow {
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: var(--clay-dark);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .masthead-title {
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 900;
+    font-size: 34px;
+    letter-spacing: 1px;
+  }
+
+  .masthead-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.7;
+  }
+
+  .folder-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .folder {
+    display: flex;
+    align-items: stretch;
+    background: #fff;
+    border: 1px solid var(--paper-line);
+    border-radius: 4px;
+    box-shadow: 0 2px 0 var(--paper-line);
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .folder:hover {
+    transform: translateX(4px);
+    box-shadow: 0 3px 0 var(--clay);
+  }
+
+  .folder.disabled {
+    opacity: 0.55;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .folder-num {
+    flex: 0 0 64px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Courier Prime', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 1px;
+  }
+
+  .folder-body {
+    flex: 1;
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .folder-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .folder-title {
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 700;
+    font-size: 18px;
+  }
+
+  .folder-stamp {
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
+  }
+
+  .stamp-live {
+    background: rgba(143,191,160,0.18);
+    color: #2D6B45;
+    border: 1px solid rgba(143,191,160,0.5);
+  }
+
+  .stamp-soon {
+    background: rgba(200,112,74,0.12);
+    color: var(--clay-dark);
+    border: 1px solid rgba(200,112,74,0.4);
+  }
+
+  .folder-desc {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .folder-tags {
+    margin-top: 4px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .folder-tag {
+    font-size: 11px;
+    color: var(--ink-light);
+    background: var(--paper);
+    border: 1px solid var(--paper-line);
+    padding: 2px 9px;
+    border-radius: 10px;
+  }
+
+  .folder-arrow {
+    flex: 0 0 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--paper-line);
+    font-size: 20px;
+  }
+
+  .folder:hover .folder-arrow { color: var(--clay); }
+
+  .footer-note {
+    margin-top: 48px;
+    border-top: 1px solid var(--paper-line);
+    padding-top: 18px;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="masthead-eyebrow">Field Office · Working Tools</div>
+    <div class="masthead-title">實務工具櫥窗</div>
+    <div class="masthead-sub">課程與工作中累積的實作小工具，持續更新。<br>點選下方項目進入對應工具。</div>
+  </div>
+
+  <div class="folder-list" id="folder-list"></div>
+
+  <div class="footer-note">
+    本頁為靜態工具入口，不收集任何使用者資料。各工具皆為獨立頁面，內容與功能說明請見各工具頁內的使用說明。
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// 工具清單：之後新增工具，只要在這個陣列裡加一筆物件即可
+// path 對應到子資料夾路徑（資料夾內需有 index.html）
+// status: "live" 表示可點擊使用；"soon" 表示尚未上線，顯示為灰階不可點
+// ============================================================
+const tools = [
+  {
+    title: "駐地社群文宣產生器",
+    desc: "填入駐地與情境，現場示範如何組裝 AI 指令，產出多平台、多語言的社群文案初稿。",
+    path: "diplo-content/",
+    status: "live",
+    tags: ["社群經營", "多語", "AI 實作"]
+  },
+  {
+    title: "本週內容計畫",
+    desc: "填入駐地資訊，AI 即時生成本週 3-7 則有台灣角度的社群內容建議，可存入 Google Sheets 供館長與小編共用。",
+    path: "content-planner/",
+    status: "live",
+    tags: ["內容規劃", "AI 生成", "團隊協作"]
+  }
+  // 之後新增工具：依此格式加入新項目
+  // { title: "...", desc: "...", path: "資料夾/", status: "live", tags: ["..."] }
+];
+
+const list = document.getElementById('folder-list');
+
+tools.forEach((tool, i) => {
+  const num = String(i + 1).padStart(2, '0');
+  const isLive = tool.status === 'live';
+  const stampHtml = isLive
+    ? `<span class="folder-stamp stamp-live">上線中</span>`
+    : `<span class="folder-stamp stamp-soon">籌備中</span>`;
+
+  const el = document.createElement(isLive ? 'a' : 'div');
+  if (isLive) {
+    el.href = tool.path;
+  }
+  el.className = 'folder' + (isLive ? '' : ' disabled');
+
+  el.innerHTML = `
+    <div class="folder-num">${num}</div>
+    <div class="folder-body">
+      <div class="folder-top">
+        <div class="folder-title">${tool.title}</div>
+        ${stampHtml}
+      </div>
+      <div class="folder-desc">${tool.desc}</div>
+      <div class="folder-tags">
+        ${tool.tags.map(t => `<span class="folder-tag">${t}</span>`).join('')}
+      </div>
+    </div>
+    <div class="folder-arrow">→</div>
+  `;
+
+  list.appendChild(el);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>駐地社群文宣產生器</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&family=Courier+Prime:wght@400;700&display=swap');
+
+  :root {
+    --ink: #1B3A2F;
+    --ink-light: #2D5443;
+    --clay: #C8704A;
+    --clay-dark: #A8542F;
+    --paper: #F5F1E8;
+    --paper-line: #E3DCC8;
+    --seal: #A8362C;
+    --muted: #6B6357;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+
+  .masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 18px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .masthead-title {
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 900;
+    font-size: 30px;
+    letter-spacing: 2px;
+    color: var(--ink);
+  }
+
+  .masthead-sub {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .masthead-stamp {
+    border: 2px solid var(--seal);
+    color: var(--seal);
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 6px 14px;
+    border-radius: 3px;
+    transform: rotate(-3deg);
+    letter-spacing: 2px;
+    white-space: nowrap;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+
+  @media (max-width: 880px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: #fff;
+    border: 1px solid var(--paper-line);
+    border-radius: 4px;
+    box-shadow: 0 2px 0 var(--paper-line);
+  }
+
+  .panel-head {
+    padding: 16px 22px;
+    border-bottom: 2px solid var(--ink);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .panel-num {
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px;
+    color: var(--clay-dark);
+    font-weight: 700;
+  }
+
+  .panel-title {
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 700;
+    font-size: 18px;
+  }
+
+  .panel-body {
+    padding: 22px;
+  }
+
+  .field {
+    margin-bottom: 18px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink-light);
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .field .hint {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 400;
+    display: block;
+    margin-top: 2px;
+  }
+
+  select, input[type="text"], textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--paper-line);
+    border-radius: 3px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 14px;
+    background: var(--paper);
+    color: var(--ink);
+    transition: border-color 0.15s ease;
+  }
+
+  select:focus, input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--clay);
+    background: #fff;
+  }
+
+  .chip-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    padding: 7px 14px;
+    border: 1.5px solid var(--paper-line);
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    background: var(--paper);
+    color: var(--ink-light);
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+
+  .chip:hover { border-color: var(--clay); }
+
+  .chip.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+  }
+
+  .generate-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--seal);
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.15s ease;
+  }
+
+  .generate-btn:hover { background: var(--clay-dark); }
+  .generate-btn:active { transform: translateY(1px); }
+
+  /* Right panel - telegram/output style */
+  .output-panel {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .output-panel .panel-head {
+    border-bottom: 2px solid var(--clay);
+  }
+
+  .output-panel .panel-title { color: var(--paper); }
+  .output-panel .panel-num { color: var(--clay); }
+
+  .output-body {
+    padding: 22px;
+    min-height: 420px;
+  }
+
+  .placeholder {
+    color: rgba(245,241,232,0.45);
+    font-size: 14px;
+    line-height: 1.9;
+    padding: 40px 10px;
+    text-align: center;
+    font-family: 'Courier Prime', monospace;
+  }
+
+  .output-card {
+    background: rgba(245,241,232,0.06);
+    border: 1px solid rgba(245,241,232,0.18);
+    border-left: 3px solid var(--clay);
+    border-radius: 3px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    animation: typeIn 0.4s ease;
+  }
+
+  @keyframes typeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .output-card-label {
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--clay);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .output-card-text {
+    font-size: 14.5px;
+    line-height: 1.75;
+    white-space: pre-wrap;
+  }
+
+  .output-card-text .hashtag {
+    color: #8FBFA0;
+  }
+
+  .prompt-block {
+    background: rgba(245,241,232,0.04);
+    border: 1px dashed rgba(245,241,232,0.25);
+    border-radius: 3px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: rgba(245,241,232,0.75);
+    white-space: pre-wrap;
+  }
+
+  .copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid rgba(245,241,232,0.35);
+    color: var(--paper);
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 4px;
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+
+  .copy-btn:hover { background: rgba(245,241,232,0.1); }
+
+  .footer-note {
+    margin-top: 36px;
+    border-top: 1px solid var(--paper-line);
+    padding-top: 18px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .footer-note strong { color: var(--ink); }
+
+  .takeaway-box {
+    margin-top: 20px;
+    background: #fff;
+    border: 1.5px solid var(--ink);
+    border-radius: 4px;
+    padding: 18px 22px;
+  }
+
+  .takeaway-box h3 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 15px;
+    margin: 0 0 10px;
+    color: var(--ink);
+  }
+
+  .takeaway-box ol {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 13.5px;
+    line-height: 1.9;
+    color: var(--ink-light);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div>
+      <div class="masthead-title">駐地社群文宣產生器</div>
+      <div class="masthead-sub">Field Officer's Content Generator</div>
+    </div>
+    <div class="masthead-stamp">實作演練 · 現場示範</div>
+  </div>
+
+  <div class="grid">
+
+    <!-- LEFT: FORM -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-num">01</span>
+        <span class="panel-title">填寫駐地資訊</span>
+      </div>
+      <div class="panel-body">
+
+        <div id="from-planner-banner" style="display:none; margin-bottom:16px; padding:10px 14px; background:rgba(143,191,160,0.12); border:1px solid rgba(143,191,160,0.4); border-radius:3px; font-size:12.5px; color:#2D6B45;">
+          ✅ 已從「本週內容計畫」帶入資訊——確認下方欄位後直接按產生即可。<br>
+          <a href="../content-planner/" style="color:#2D6B45; font-size:11px; opacity:0.8;">← 回到本週計畫</a>
+        </div>
+
+        <div class="field">
+          <label>這篇文宣要做什麼事？</label>
+          <select id="topic">
+            <option value="festival">介紹台灣節慶（如中秋、端午）</option>
+            <option value="policy">說明一項台灣政策／成就（如半導體、健保）</option>
+            <option value="event">宣傳駐地館處活動（如文化展、講座）</option>
+            <option value="crisis">回應一則對台不實訊息</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>受眾所在地區</label>
+          <div class="chip-group" id="region-group">
+            <div class="chip active" data-val="us">北美／西歐</div>
+            <div class="chip" data-val="jp">日韓</div>
+            <div class="chip" data-val="sea">東南亞</div>
+            <div class="chip" data-val="latam">拉丁美洲</div>
+          </div>
+          <span class="hint">影響語氣與文化參照點，不影響核心結構</span>
+        </div>
+
+        <div class="field">
+          <label>語氣風格</label>
+          <div class="chip-group" id="tone-group">
+            <div class="chip active" data-val="friendly">親切口語</div>
+            <div class="chip" data-val="formal">正式穩重</div>
+            <div class="chip" data-val="witty">幽默帶梗</div>
+          </div>
+          <span class="hint" id="tone-hint"></span>
+        </div>
+
+        <div class="field">
+          <label>一句話描述具體內容
+            <span class="hint">例：今年中秋館處要辦烤肉同樂會，邀請當地友人參加</span>
+          </label>
+          <textarea id="detail" rows="3" placeholder="在這裡輸入你的具體情境……"></textarea>
+        </div>
+
+        <div class="field">
+          <label>需要哪些平台版本？</label>
+          <div class="chip-group" id="platform-group">
+            <div class="chip active" data-val="fb">Facebook</div>
+            <div class="chip active" data-val="ig">Instagram</div>
+            <div class="chip" data-val="x">X（Twitter）</div>
+          </div>
+        </div>
+
+        <div class="field" id="x-strategy-field" style="display:none;">
+          <label>X 話題策略
+            <span class="hint">X 的傳播邏輯跟 FB/IG 不同——靠融入即時話題而非粉絲數，但蹭話題有風險係數</span>
+          </label>
+          <div class="chip-group" id="xstrategy-group">
+            <div class="chip active" data-val="safe">安全話題（節慶／文化／民交）</div>
+            <div class="chip" data-val="risky">時事話題（蹭熱門時事）</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>需要哪些語言版本？
+            <span class="hint">每個平台都會各自產出所選語言的版本——例如選 FB + 英／西，就會產出 FB 英文版與 FB 西語版兩篇</span>
+          </label>
+          <div class="chip-group" id="lang-group">
+            <div class="chip active" data-val="zh">中文</div>
+            <div class="chip active" data-val="en">English</div>
+            <div class="chip" data-val="es">Español</div>
+            <div class="chip" data-val="ja">日本語</div>
+          </div>
+        </div>
+
+        <button class="generate-btn" onclick="generate()">產生示範文案 →</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: OUTPUT -->
+    <div class="panel output-panel">
+      <div class="panel-head">
+        <span class="panel-num">02</span>
+        <span class="panel-title">產出結果</span>
+      </div>
+      <div class="output-body" id="output">
+        <div class="placeholder">
+          ← 左邊填好之後按「產生示範文案」<br>
+          這裡會顯示：<br>
+          ① 你的填空會組成什麼樣的 AI 指令（prompt）<br>
+          ② 套用這個指令後，AI 大概會產出什麼樣的文案
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="takeaway-box">
+    <h3>📋 帶回去的東西：這個表單背後的「填空式 Prompt 骨架」</h3>
+    <ol>
+      <li><strong>角色設定</strong>：「你是駐〔地區〕的台灣外交人員，負責經營官方社群帳號」</li>
+      <li><strong>任務說明</strong>：「請將以下內容寫成適合〔平台〕的貼文：〔一句話描述〕」</li>
+      <li><strong>受眾與語境</strong>：「目標受眾是〔地區〕的當地民眾，請用〔語氣〕的方式，並考量當地文化習慣」</li>
+      <li><strong>輸出格式</strong>：「請分別產出 Facebook（可長文）、Instagram（精簡＋表情符號）、X（140字內）三個版本，並附上 3-5 個當地常用的相關 hashtag」</li>
+      <li><strong>翻譯原則</strong>：「各語言版本不是逐字翻譯，請依該語言社群使用者的表達習慣與語感重新撰寫」——少了這句，AI 給你的多語版本容易帶機器翻譯腔</li>
+    </ol>
+  </div>
+
+  <div class="footer-note">
+    <strong>使用說明：</strong>今天現場用預先準備的範例展示「填空 → 產出」的邏輯，目的是讓大家熟悉這套「角色＋任務＋受眾＋格式」的骨架。回到駐地後，把上面四個欄位套進 ChatGPT 或 Claude，換成你自己的真實任務內容，就能直接產出初稿——核心是這套<strong>結構</strong>，不是這個網頁本身。
+  </div>
+
+</div>
+
+<script>
+const regionGroup = document.getElementById('region-group');
+const toneGroup = document.getElementById('tone-group');
+const platformGroup = document.getElementById('platform-group');
+
+function setupSingleSelect(group) {
+  group.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+}
+
+function setupMultiSelect(group) {
+  group.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.classList.toggle('active');
+    });
+  });
+}
+
+setupSingleSelect(regionGroup);
+setupSingleSelect(toneGroup);
+setupMultiSelect(platformGroup);
+
+const langGroup = document.getElementById('lang-group');
+setupMultiSelect(langGroup);
+
+const xStrategyField = document.getElementById('x-strategy-field');
+const xstrategyGroup = document.getElementById('xstrategy-group');
+setupSingleSelect(xstrategyGroup);
+
+function syncXStrategyVisibility() {
+  const xActive = platformGroup.querySelector('.chip[data-val="x"]').classList.contains('active');
+  xStrategyField.style.display = xActive ? 'block' : 'none';
+}
+platformGroup.querySelectorAll('.chip').forEach(c => c.addEventListener('click', syncXStrategyVisibility));
+syncXStrategyVisibility();
+
+// ── 從本週計畫帶入參數 ──
+(function applyUrlParams() {
+  const p = new URLSearchParams(window.location.search);
+  if (!p.get('from')) return; // 不是從計畫跳過來的，不自動填
+
+  // topic 下拉
+  const topicVal = p.get('topic');
+  if (topicVal) {
+    const el = document.getElementById('topic');
+    if ([...el.options].some(o => o.value === topicVal)) el.value = topicVal;
+  }
+
+  // detail 文字框
+  const detail = p.get('detail');
+  if (detail) document.getElementById('detail').value = decodeURIComponent(detail);
+
+  // platform chip（清掉預設，只選傳來的那個）
+  const platform = p.get('platform');
+  if (platform) {
+    platformGroup.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    const map = { 'Facebook': 'fb', 'Instagram': 'ig', 'X': 'x' };
+    const chipVal = map[platform] || 'fb';
+    const target = platformGroup.querySelector(`.chip[data-val="${chipVal}"]`);
+    if (target) target.classList.add('active');
+    syncXStrategyVisibility();
+  }
+
+  // 顯示「從計畫帶入」的提示 banner
+  const banner = document.getElementById('from-planner-banner');
+  if (banner) banner.style.display = 'block';
+})();
+
+const regionLabels = { us: '北美／西歐', jp: '日韓', sea: '東南亞', latam: '拉丁美洲' };
+const toneLabels = { friendly: '親切口語', formal: '正式穩重', witty: '幽默帶梗' };
+const platformLabels = { fb: 'Facebook', ig: 'Instagram', x: 'X（Twitter）' };
+const topicLabels = {
+  festival: '介紹台灣節慶',
+  policy: '說明台灣政策／成就',
+  event: '宣傳館處活動',
+  crisis: '回應不實訊息'
+};
+
+const langLabels = { zh: '中文', en: 'English', es: 'Español', ja: '日本語' };
+
+// 多語內容庫——不是機器直譯，是依各語言的社群語域習慣分別撰寫
+// festival 主題提供四語完整示範（最常用情境），其他主題用 multiLangGeneric 結構化產出
+const festivalMultiLang = {
+  zh: (detail) => `中秋節到了 🌕\n\n${detail || '今晚我們也要在駐地辦烤肉同樂會，邀請大家一起感受台灣味的中秋'}。\n\n在台灣，中秋節已經從單純賞月吃月餅，變成全民「烤肉節」——這個有趣的轉變，是台灣人自己發明的新傳統。\n\n歡迎一起來體驗！`,
+  en: (detail) => `Mid-Autumn Festival is here 🌕\n\n${detail || "Tonight we're hosting a BBQ gathering to share Taiwan's take on this celebration"}.\n\nIn Taiwan, Mid-Autumn has evolved from moon-gazing and mooncakes into a nationwide BBQ tradition — a quirky twist Taiwanese people invented themselves.\n\nCome join us and taste the Taiwanese version of the holiday!`,
+  es: (detail) => `¡Llegó el Festival del Medio Otoño! 🌕\n\n${detail || 'Esta noche organizamos una barbacoa para compartir cómo Taiwán celebra esta fiesta'}.\n\nEn Taiwán, esta celebración pasó de admirar la luna y comer pasteles lunares, a convertirse en una auténtica "fiesta nacional de la parrilla" — una tradición que los propios taiwaneses inventaron.\n\n¡Te esperamos para que lo vivas con nosotros!`,
+  ja: (detail) => `中秋節がやってきました 🌕\n\n${detail || '今夜は現地でバーベキューの集いを開催し、台湾流の中秋節をご紹介します'}。\n\n台湾では、月を眺めて月餅を食べるだけだった中秋節が、いつしか「みんなでバーベキューをする日」に変わりました。台湾人自身が生み出した、ちょっと面白い新しい伝統です。\n\nぜひ皆様もご一緒に台湾流の中秋節をお楽しみください。`
+};
+
+function multiLangGeneric(topic, lang, detail) {
+  const intros = {
+    zh: { festival: '台灣節慶即將到來，', policy: '台灣在這項議題上持續展現具體成果，', event: '駐地館處即將舉辦活動，', crisis: '針對近期流傳的相關訊息，我們想分享正確資訊：' },
+    en: { festival: 'A Taiwanese festival is coming up — ', policy: 'Taiwan continues to deliver concrete results on this issue — ', event: 'Our office is hosting an upcoming event — ', crisis: 'Regarding recent circulating claims, we want to share accurate information: ' },
+    es: { festival: 'Se acerca una celebración taiwanesa — ', policy: 'Taiwán sigue mostrando resultados concretos en este tema — ', event: 'Nuestra oficina organizará un evento próximamente — ', crisis: 'Sobre la información que ha circulado recientemente, queremos compartir datos precisos: ' },
+    ja: { festival: '台湾の年中行事が近づいています。', policy: '台湾はこのテーマで具体的な成果を上げ続けています。', event: '当館では今後イベントを開催いたします。', crisis: '最近広まっている情報について、正確な内容をお伝えいたします：' }
+  };
+  const closings = {
+    zh: { default: '歡迎大家一起來看看！', crisis: '若有任何疑問，歡迎私訊我們查證。' },
+    en: { default: "We'd love for you to join us!", crisis: 'If you have any questions, feel free to reach out for verification.' },
+    es: { default: '¡Te invitamos a participar!', crisis: 'Si tiene alguna duda, no dude en contactarnos para verificar la información.' },
+    ja: { default: '皆様のご参加を心よりお待ちしております。', crisis: 'ご質問がございましたら、お気軽にDMにてお問い合わせください。' }
+  };
+  const close = topic === 'crisis' ? closings[lang].crisis : closings[lang].default;
+  const core = detail || { zh: '（請填入具體情境）', en: '(please fill in your specific context)', es: '(por favor complete el contexto específico)', ja: '（具体的な内容をご入力ください）' }[lang];
+
+  return `${intros[lang][topic]}${core}\n\n${close}`;
+}
+
+
+// Sample outputs keyed by topic+platform, with tone variants baked in via templates
+const sampleBank = {
+  festival: {
+    fb: {
+      friendly: (detail, region) => `中秋節快到了 🌕\n\n${detail || '今年我們在駐地舉辦了一場小小的烤肉同樂會，邀請當地朋友一起感受台灣的中秋氣氛'}。\n\n在台灣，中秋節不只是賞月吃月餅，更是一家人圍在一起、感謝豐收的日子——近年來「全民烤肉」更成了台灣人自己發明的新傳統，街頭巷尾飄著烤肉香，是這個節日最有趣的地方。\n\n如果你也想嚐嚐台灣味的中秋，歡迎來我們的活動，一起烤肉賞月！\n\n#TaiwanMidAutumn #台灣中秋 #${region === 'jp' ? 'お月見' : 'MoonFestival'}`,
+      formal: (detail, region) => `中秋佳節，台灣駐館謹向各界友人致以節日問候。\n\n${detail || '本處將舉辦中秋文化活動，邀請當地各界人士共同參與，體驗台灣傳統節慶文化'}。\n\n中秋節為華人社會重要傳統節日，象徵團圓與感恩，台灣社會近年發展出獨特的「中秋烤肉」文化現象，融合傳統與創新，展現台灣社會的活力與包容性。\n\n誠摯邀請各界蒞臨，共同體驗台灣文化之美。\n\n#TaiwanCulture #MidAutumnFestival`,
+      witty: (detail, region) => `說個秘密：台灣人過中秋不是賞月，是烤肉 🔥🌕\n\n${detail || '沒錯，我們真的把「中秋節」過成了「全民烤肉節」，連超市都會在這幾天賣到缺貨'}。\n\n沒人知道這個傳統怎麼開始的，但現在它已經是台灣中秋的標準配備：月亮在天上，烤肉在地上，朋友在身邊。\n\n好奇我們怎麼把一個賞月節過成全民燒烤大會？來我們的活動現場直接體驗！\n\n#台灣中秋 #烤肉才是正解 #TaiwanBBQ`
+    }
+  }
+};
+
+// X 平台專屬玩法：不是字數壓縮版，而是「對話感＋話題鉤」的不同結構
+// safe：蹭節慶/文化/民間交流類話題標籤，風險低
+// risky：蹭時事熱點，能見度高但容易被解讀為政治操作，需謹慎
+const xStrategyBank = {
+  festival: {
+    safe: (region, detail) => ({
+      tag: '#中秋節 #MidAutumnFestival',
+      mention: '可標註駐地知名美食／文化帳號，邀請對方互動',
+      text: `中秋節到了 🌕 ${detail || '今晚我們也要烤肉賞月！'}\n想知道台灣人怎麼把賞月節過成全民烤肉節嗎？👇`
+    }),
+    risky: (region, detail) => ({
+      tag: '#TaiwanCanHelp（蹭防疫/人道援助等熱門時事標籤）',
+      mention: '標註正在討論相關時事的當地意見領袖或媒體帳號',
+      text: `當大家都在討論〔當前熱門時事〕時，別忘了台灣一直都在＿＿＿。${detail || ''}`
+    })
+  },
+  policy: {
+    safe: (region, detail) => ({
+      tag: '#TaiwanCanHelp #台灣經驗',
+      mention: '可標註當地產業協會或友好智庫帳號',
+      text: `${detail || '台灣在這項議題上累積了具體可分享的經驗'}\n如果你也關心這個議題，歡迎追蹤了解更多 →`
+    }),
+    risky: (region, detail) => ({
+      tag: '蹭當下正在被討論的國際科技／供應鏈議題標籤',
+      mention: '標註正在發表相關評論的記者或政策帳號，直接加入討論串',
+      text: `關於現在大家都在談的〔時事議題〕——台灣的角色其實是：${detail || ''}`
+    })
+  },
+  event: {
+    safe: (region, detail) => ({
+      tag: '#TaiwanInYourCity（依駐地調整）',
+      mention: '標註合作的當地文化機構或場地帳號',
+      text: `這週末，${detail || '我們在當地辦了一場文化活動'} 🎉\n現場直擊 👇`
+    }),
+    risky: (region, detail) => ({
+      tag: '蹭當地正夯的話題標籤，把活動硬接上去',
+      mention: '標註熱門話題下的高互動帳號，搶搭流量',
+      text: `既然大家都在關注〔熱門話題〕，順便提一下我們這週剛好也有活動：${detail || ''}`
+    })
+  },
+  crisis: {
+    safe: (region, detail) => ({
+      tag: '#查證 #正確資訊（不蹭任何熱點，純澄清）',
+      mention: '不主動標註對方帳號，避免擴大爭議',
+      text: `關於近期流傳的訊息，我們想分享正確資訊：${detail || ''}\n若有疑問歡迎私訊查證。`
+    }),
+    risky: null // 危機情境不提供「蹭時事」選項——這是刻意的教學留白
+  }
+};
+
+function xRiskNote(topic, strategy) {
+  if (topic === 'crisis') {
+    return '⚠️ 危機澄清情境不提供「蹭時事」版本：在澄清不實訊息時主動連結其他熱點話題，容易被解讀為操作議題或轉移焦點，這條線不該跨。';
+  }
+  if (strategy === 'risky') {
+    return '⚠️ 高風險示範：蹭時事話題能見度高，但官方帳號若誤判話題性質（如話題本身具爭議或敏感），容易被解讀為政治操作。上線前務必跟館長／發言系統確認。';
+  }
+  return '✅ 低風險示範：蹭節慶、文化、民間交流類話題，是官方帳號最安全的「借勢」方式。';
+}
+function genericOutput(topic, region, tone, detail, platform) {
+  const topicIntro = {
+    festival: '台灣節慶即將到來，',
+    policy: '台灣在這項議題上持續展現具體成果，',
+    event: '駐地館處即將舉辦活動，',
+    crisis: '針對近期流傳的相關訊息，我們想分享正確資訊：'
+  }[topic];
+
+  // 危機溝通：不論選哪種語氣，都收斂為「事實先行、語氣克制」——
+  // 這是刻意的教學設計，提醒學員「危機情境下幽默感要收起來」
+  const toneVoice = topic === 'crisis'
+    ? { open: '你好，', close: '若有任何疑問，歡迎私訊我們查證。' }
+    : {
+        friendly: { open: '哈囉大家好！', close: '一起來看看吧 😊' },
+        formal: { open: '敬啟，', close: '敬請各界關注。' },
+        witty: { open: '欸，你知道嗎？', close: '是不是覺得很有趣？' }
+      }[tone];
+
+  const platformShape = {
+    fb: { len: '（完整版，適合長文敘事）', tag: '#Taiwan #' + regionLabels[region] },
+    ig: { len: '（精簡版，搭配視覺素材使用）', tag: '#Taiwan🇹🇼 #台灣' },
+    x: { len: '（140 字內精華版）', tag: '#Taiwan' }
+  }[platform];
+
+  const core = detail
+    ? detail
+    : '這是一個具體案例的示範內容，請在左側填入你實際要傳播的事件描述。';
+
+  return `${toneVoice.open}\n\n${topicIntro}${core}\n\n${toneVoice.close}\n\n${platformShape.len}\n${platformShape.tag}`;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function generate() {
+  const topic = document.getElementById('topic').value;
+  const region = regionGroup.querySelector('.chip.active').dataset.val;
+  const tone = toneGroup.querySelector('.chip.active').dataset.val;
+  const detail = document.getElementById('detail').value.trim();
+  const platforms = [...platformGroup.querySelectorAll('.chip.active')].map(c => c.dataset.val);
+  const langs = [...langGroup.querySelectorAll('.chip.active')].map(c => c.dataset.val);
+
+  const output = document.getElementById('output');
+  const toneHint = document.getElementById('tone-hint');
+
+  if (topic === 'crisis') {
+    toneHint.textContent = '⚠️ 危機回應情境下，語氣會自動收斂為「事實先行、克制穩重」——這是刻意設計，幽默感在澄清不實訊息時容易被誤讀為輕忽';
+  } else {
+    toneHint.textContent = '';
+  }
+
+  if (platforms.length === 0) {
+    output.innerHTML = '<div class="placeholder">請至少選擇一個平台版本</div>';
+    return;
+  }
+  if (langs.length === 0) {
+    output.innerHTML = '<div class="placeholder">請至少選擇一個語言版本</div>';
+    return;
+  }
+
+  // Build the "prompt that was assembled" block
+  const xStrategy = xstrategyGroup.querySelector('.chip.active').dataset.val;
+  const xStrategyLine = platforms.includes('x')
+    ? `\n【X 專屬】${xStrategy === 'safe' ? '採用安全話題借勢（節慶/文化/民間交流類）' : '採用時事話題借勢（風險較高，需審慎評估）'}，並適度標註相關帳號製造對話感`
+    : '';
+
+  const promptText =
+`【角色】你是駐${regionLabels[region]}的台灣外交人員，負責經營官方社群帳號
+【任務】請將以下內容寫成社群貼文：${topicLabels[topic]}——${detail || '（請填入具體情境）'}
+【受眾與語境】目標受眾是${regionLabels[region]}的當地民眾，請用「${toneLabels[tone]}」的方式表達，並考量當地文化習慣
+【輸出格式】請分別產出 ${platforms.map(p => platformLabels[p]).join('、')} 版本，每個平台各需 ${langs.map(l => langLabels[l]).join('／')} 版本，並附上 3-5 個相關 hashtag${xStrategyLine}
+【翻譯原則】各語言版本不是逐字翻譯，請依該語言社群使用者的表達習慣與語感重新撰寫`;
+
+  let html = `<div class="prompt-block">${escapeHtml(promptText)}</div>`;
+
+  platforms.forEach(p => {
+    if (p === 'x') {
+      const bank = xStrategyBank[topic];
+      const variant = bank ? bank[xStrategy] : null;
+
+      if (!variant) {
+        html += `
+          <div class="output-card" style="border-left-color:#A8362C;">
+            <div class="output-card-label" style="color:#E8A598;">X 版本 · 已停用「蹭時事」</div>
+            <div class="output-card-text">${escapeHtml(xRiskNote(topic, xStrategy))}</div>
+          </div>
+        `;
+        return;
+      }
+
+      // X 版本目前以中文邏輯為主示範一次話題策略，語言版本附加在文字下方做精簡對照
+      const v = variant(region, detail);
+      const riskColor = xStrategy === 'risky' ? '#E0925A' : '#8FBFA0';
+      html += `
+        <div class="output-card" style="border-left-color:${riskColor};">
+          <div class="output-card-label" style="color:${riskColor};">X 版本 · ${xStrategy === 'risky' ? '高風險示範' : '安全示範'}（${langs.map(l => langLabels[l]).join('／')}）</div>
+          <div class="output-card-text">${escapeHtml(v.text)}\n\n${escapeHtml(v.tag)}</div>
+          <div style="margin-top:10px; font-size:12px; color:rgba(245,241,232,0.6); border-top:1px solid rgba(245,241,232,0.15); padding-top:8px;">
+            🔗 ＠提及建議：${escapeHtml(v.mention)}
+          </div>
+        </div>
+        <div class="prompt-block" style="border-color:${riskColor}; opacity:0.9;">
+          ${escapeHtml(xRiskNote(topic, xStrategy))}
+        </div>
+      `;
+      return;
+    }
+
+    // FB / IG：每個選定語言各產出一篇
+    langs.forEach(lang => {
+      let text;
+      if (lang === 'zh') {
+        if (sampleBank[topic] && sampleBank[topic][p] && sampleBank[topic][p][tone]) {
+          text = sampleBank[topic][p][tone](detail, region);
+        } else {
+          text = genericOutput(topic, region, tone, detail, p);
+        }
+      } else {
+        if (topic === 'festival') {
+          text = festivalMultiLang[lang](detail);
+        } else {
+          text = multiLangGeneric(topic, lang, detail);
+        }
+        // IG 版本附加精簡提示與 emoji 風格的格式說明
+        if (p === 'ig') {
+          const igNote = { en: '(short version, pair with visuals)', es: '(versión breve, para usar con imágenes)', ja: '（画像と組み合わせる簡潔版）' };
+          text += `\n\n${igNote[lang] || ''}`;
+        }
+      }
+      html += `
+        <div class="output-card">
+          <div class="output-card-label">${platformLabels[p]} 版本 · ${langLabels[lang]}</div>
+          <div class="output-card-text">${escapeHtml(text)}</div>
+        </div>
+      `;
+    });
+  });
+
+  html += `<div class="prompt-block" style="border-style: solid; border-color: rgba(200,112,74,0.4);">💡 重點：左邊欄位＋這段【角色／任務／受眾／格式／翻譯原則】指令，就是你回去可以直接套用的骨架。換掉內容，套進 ChatGPT 或 Claude，就能一次產出多語版本初稿。</div>`;
+
+  output.innerHTML = html;
+  output.scrollTop = 0;
+}
+</script>
+</body>
+</html>

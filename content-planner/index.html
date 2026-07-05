@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>本週內容計畫</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&family=Courier+Prime:wght@400;700&display=swap');
+
+  :root {
+    --ink: #1B3A2F;
+    --ink-light: #2D5443;
+    --clay: #C8704A;
+    --clay-dark: #A8542F;
+    --paper: #F5F1E8;
+    --paper-line: #E3DCC8;
+    --seal: #A8362C;
+    --muted: #6B6357;
+    --gold: #B8860B;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  .masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 18px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .masthead-title {
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 900;
+    font-size: 28px;
+    letter-spacing: 2px;
+  }
+
+  .masthead-sub {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .masthead-stamp {
+    border: 2px solid var(--seal);
+    color: var(--seal);
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 3px;
+    transform: rotate(-2deg);
+    letter-spacing: 2px;
+  }
+
+  /* ── Layout ── */
+  .layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+
+  /* ── Panel ── */
+  .panel {
+    background: #fff;
+    border: 1px solid var(--paper-line);
+    border-radius: 4px;
+    box-shadow: 0 2px 0 var(--paper-line);
+  }
+
+  .panel-head {
+    padding: 14px 20px;
+    border-bottom: 2px solid var(--ink);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .panel-num {
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    color: var(--clay-dark);
+    font-weight: 700;
+  }
+
+  .panel-title {
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .panel-body { padding: 20px; }
+
+  /* ── Form fields ── */
+  .field { margin-bottom: 16px; }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-light);
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+  }
+
+  .field .hint {
+    font-size: 11px;
+    color: var(--muted);
+    display: block;
+    margin-top: 3px;
+  }
+
+  select, input[type="text"], textarea {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1.5px solid var(--paper-line);
+    border-radius: 3px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 13.5px;
+    background: var(--paper);
+    color: var(--ink);
+    transition: border-color 0.15s;
+  }
+
+  select:focus, input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--clay);
+    background: #fff;
+  }
+
+  .chip-group { display: flex; gap: 7px; flex-wrap: wrap; }
+
+  .chip {
+    padding: 6px 12px;
+    border: 1.5px solid var(--paper-line);
+    border-radius: 16px;
+    font-size: 12px;
+    cursor: pointer;
+    background: var(--paper);
+    color: var(--ink-light);
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .chip:hover { border-color: var(--clay); }
+  .chip.active { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+  /* ── GAS URL config ── */
+  .config-section {
+    background: var(--paper);
+    border: 1px dashed var(--paper-line);
+    border-radius: 3px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    font-size: 12px;
+  }
+
+  .config-section summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    font-size: 11px;
+    text-transform: uppercase;
+  }
+
+  .config-section input {
+    margin-top: 8px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+  }
+
+  /* ── Generate button ── */
+  .gen-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--seal);
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: background 0.15s;
+  }
+
+  .gen-btn:hover { background: var(--clay-dark); }
+  .gen-btn:disabled { background: var(--muted); cursor: not-allowed; }
+
+  /* ── Right panel: plan output ── */
+  .plan-panel { background: var(--ink); color: var(--paper); }
+  .plan-panel .panel-head { border-bottom-color: var(--clay); }
+  .plan-panel .panel-title { color: var(--paper); }
+  .plan-panel .panel-num { color: var(--clay); }
+  .plan-body { padding: 20px; min-height: 460px; }
+
+  .placeholder-text {
+    color: rgba(245,241,232,0.38);
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px;
+    line-height: 2;
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  /* ── Plan card ── */
+  .week-header {
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--clay);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(245,241,232,0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .save-btn {
+    background: transparent;
+    border: 1px solid rgba(245,241,232,0.4);
+    color: var(--paper);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .save-btn:hover { background: rgba(245,241,232,0.1); }
+  .save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .post-card {
+    border: 1px solid rgba(245,241,232,0.14);
+    border-left: 3px solid var(--clay);
+    border-radius: 3px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    animation: fadeUp 0.35s ease;
+    background: rgba(245,241,232,0.04);
+  }
+
+  .post-card.high { border-left-color: #8FBFA0; }
+  .post-card.med  { border-left-color: var(--clay); }
+  .post-card.low  { border-left-color: rgba(245,241,232,0.3); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .card-day {
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    color: var(--clay);
+    letter-spacing: 1px;
+  }
+
+  .card-badges { display: flex; gap: 5px; flex-wrap: wrap; }
+
+  .badge {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 8px;
+    border: 1px solid rgba(245,241,232,0.25);
+    color: rgba(245,241,232,0.75);
+  }
+
+  .badge-hot { border-color: #8FBFA0; color: #8FBFA0; }
+
+  .card-title {
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+
+  .card-hook {
+    font-size: 13px;
+    line-height: 1.7;
+    color: rgba(245,241,232,0.82);
+    margin-bottom: 8px;
+  }
+
+  .card-platforms {
+    font-size: 11px;
+    color: rgba(245,241,232,0.5);
+    font-family: 'Courier Prime', monospace;
+  }
+
+  .card-action {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(245,241,232,0.1);
+  }
+
+  .draft-btn {
+    display: inline-block;
+    font-size: 12px;
+    padding: 5px 14px;
+    border: 1px solid var(--clay);
+    border-radius: 3px;
+    color: var(--clay);
+    text-decoration: none;
+    font-family: 'Noto Sans TC', sans-serif;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .draft-btn:hover {
+    background: var(--clay);
+    color: #fff;
+  }
+
+  /* ── Loading ── */
+  .loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: rgba(245,241,232,0.6);
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px;
+  }
+
+  .loading .dots::after {
+    content: '';
+    animation: dots 1.4s infinite;
+  }
+
+  @keyframes dots {
+    0%   { content: ''; }
+    33%  { content: '.'; }
+    66%  { content: '..'; }
+    100% { content: '...'; }
+  }
+
+  /* ── Error ── */
+  .error-box {
+    background: rgba(168,54,44,0.15);
+    border: 1px solid rgba(168,54,44,0.4);
+    border-radius: 3px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #E8A598;
+    line-height: 1.7;
+  }
+
+  /* ── Saved notice ── */
+  .saved-notice {
+    background: rgba(143,191,160,0.12);
+    border: 1px solid rgba(143,191,160,0.35);
+    border-radius: 3px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #8FBFA0;
+    margin-top: 12px;
+    display: none;
+  }
+
+  /* ── Takeaway ── */
+  .takeaway {
+    margin-top: 20px;
+    background: #fff;
+    border: 1.5px solid var(--ink);
+    border-radius: 4px;
+    padding: 16px 20px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--ink-light);
+  }
+
+  .takeaway strong { color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div>
+      <div class="masthead-title">本週內容計畫</div>
+      <div class="masthead-sub">Weekly Content Planner</div>
+    </div>
+    <div class="masthead-stamp">AI 生成 · 即時建議</div>
+  </div>
+
+  <div class="layout">
+
+    <!-- LEFT: 表單 -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-num">01</span>
+        <span class="panel-title">填寫駐地資訊</span>
+      </div>
+      <div class="panel-body">
+
+        <details class="config-section">
+          <summary>⚙ 後端設定（GAS 網址）</summary>
+          <input type="text" id="gas-url" placeholder="貼上你的 Google Apps Script 部署網址" />
+          <span class="hint" style="margin-top:6px; display:block;">此網址存在你的瀏覽器，不會被其他人看到。設定一次即可。</span>
+        </details>
+
+        <div class="field">
+          <label>駐地地區</label>
+          <select id="region">
+            <option value="us">北美（美國/加拿大）</option>
+            <option value="eu">西歐（英/法/德/荷）</option>
+            <option value="jp">日本</option>
+            <option value="kr">韓國</option>
+            <option value="sea">東南亞（泰/馬/印/越）</option>
+            <option value="latam">拉丁美洲</option>
+            <option value="au">澳洲/紐西蘭</option>
+            <option value="other">其他</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>這週有哪些特殊時事或當地活動？
+            <span class="hint">不填也可以，AI 會根據當月自動推薦；填了可以讓建議更貼近駐地情況</span>
+          </label>
+          <textarea id="local-events" rows="3" placeholder="例：本週當地舉辦環保週、國慶日即將到來、當地剛發生天災台灣有捐款…"></textarea>
+        </div>
+
+        <div class="field">
+          <label>這週台灣有什麼大事？
+            <span class="hint">選填。讓 AI 判斷哪些值得從台灣角度切入</span>
+          </label>
+          <textarea id="taiwan-news" rows="2" placeholder="例：台灣半導體展、外交部記者會、某政策正式上路…"></textarea>
+        </div>
+
+        <div class="field">
+          <label>帳號主力經營的平台</label>
+          <div class="chip-group" id="platform-group">
+            <div class="chip active" data-val="Facebook">Facebook</div>
+            <div class="chip active" data-val="Instagram">Instagram</div>
+            <div class="chip" data-val="X">X</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>每週目標發文則數</label>
+          <div class="chip-group" id="freq-group">
+            <div class="chip" data-val="3">3 則</div>
+            <div class="chip active" data-val="5">5 則</div>
+            <div class="chip" data-val="7">7 則</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>語氣風格</label>
+          <div class="chip-group" id="tone-group">
+            <div class="chip active" data-val="親切口語">親切口語</div>
+            <div class="chip" data-val="正式穩重">正式穩重</div>
+            <div class="chip" data-val="幽默帶梗">幽默帶梗</div>
+          </div>
+        </div>
+
+        <button class="gen-btn" id="gen-btn" onclick="generate()">產生本週內容計畫 →</button>
+
+      </div>
+    </div>
+
+    <!-- RIGHT: 輸出 -->
+    <div class="panel plan-panel">
+      <div class="panel-head">
+        <span class="panel-num">02</span>
+        <span class="panel-title">本週內容計畫</span>
+      </div>
+      <div class="plan-body" id="plan-body">
+        <div class="placeholder-text">
+          ← 填好駐地資訊後按「產生」<br><br>
+          AI 會根據你的駐地、當月節慶、<br>
+          你補充的時事，規劃本週 3-7 則<br>
+          有台灣角度的社群內容建議
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="takeaway">
+    <strong>📋 這份工具怎麼用：</strong>每週一填一次，AI 幫你想好「這週可以發什麼」；確認計畫後按「存進 Google Sheets」，館長與小編共用同一份計畫表，各自認領發文任務。回到文宣產生器，選對應的主題與平台，生成正式貼文初稿。
+  </div>
+
+</div>
+
+<script>
+// ── 選擇器 ──
+function setupMulti(group) {
+  group.querySelectorAll('.chip').forEach(c => {
+    c.addEventListener('click', () => c.classList.toggle('active'));
+  });
+}
+function setupSingle(group) {
+  group.querySelectorAll('.chip').forEach(c => {
+    c.addEventListener('click', () => {
+      group.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+    });
+  });
+}
+
+setupMulti(document.getElementById('platform-group'));
+setupSingle(document.getElementById('freq-group'));
+setupSingle(document.getElementById('tone-group'));
+
+// ── 儲存 GAS URL ──
+const gasInput = document.getElementById('gas-url');
+if (localStorage.getItem('gasUrl')) gasInput.value = localStorage.getItem('gasUrl');
+gasInput.addEventListener('change', () => localStorage.setItem('gasUrl', gasInput.value.trim()));
+
+// ── 當月節慶資料庫 ──
+const festivalDB = {
+  us:    { 1:'New Year', 2:'Valentine\'s Day', 3:'St. Patrick\'s Day', 4:'Earth Day', 5:'Mother\'s Day', 6:'Pride Month', 7:'Independence Day', 8:'Back to School', 9:'Labor Day', 10:'Halloween', 11:'Thanksgiving', 12:'Christmas' },
+  eu:    { 1:'New Year', 2:'Valentine\'s Day', 3:'Carnival / Mardi Gras', 4:'Easter', 5:'Labour Day', 6:'Midsummer', 7:'Summer holidays', 8:'Summer festivals', 9:'Heritage Days', 10:'Oktoberfest', 11:'Armistice Day', 12:'Christmas markets' },
+  jp:    { 1:'お正月・成人の日', 2:'節分・バレンタイン', 3:'ひな祭り・春分の日', 4:'お花見・昭和の日', 5:'ゴールデンウィーク・こどもの日', 6:'梅雨・父の日', 7:'七夕・海の日', 8:'お盆・花火大会', 9:'敬老の日・秋分の日', 10:'体育の日・ハロウィン', 11:'文化の日・七五三', 12:'クリスマス・年末' },
+  kr:    { 1:'설날（Lunar New Year）', 2:'Valentine\'s Day', 3:'三一節', 4:'植木日', 5:'어린이날（Children\'s Day）', 6:'現忠日', 7:'制憲節', 8:'光復節', 9:'추석（Chuseok）', 10:'개천절・한글날', 11:'受能日前後', 12:'聖誕節' },
+  sea:   { 1:'新年・元旦', 2:'農曆春節', 3:'佛誕日（泰）', 4:'宋干節（泰）水節', 5:'勞動節', 6:'齋戒月', 7:'開齋節前後', 8:'國慶（印尼/新）', 9:'中秋節', 10:'光明節', 11:'國王誕辰（泰）', 12:'聖誕節' },
+  latam: { 1:'Año Nuevo', 2:'Carnaval・Día del Amor', 3:'Día de la Mujer', 4:'Semana Santa', 5:'Día del Trabajo・Cinco de Mayo', 6:'Día del Padre', 7:'Fiestas Patrias', 8:'Fiestas Patrias（智利/秘魯）', 9:'Fiestas Patrias（墨西哥）', 10:'Día de los Muertos', 11:'Día de la Tradición', 12:'Navidad' },
+  au:    { 1:'Australia Day', 2:'Valentine\'s Day', 3:'Mardi Gras（Sydney）', 4:'Easter・Anzac Day', 5:'Mother\'s Day', 6:'Queen\'s Birthday（QLD）', 7:'NAIDOC Week', 8:'Book Week', 9:'Father\'s Day', 10:'Oktoberfest（local）', 11:'Remembrance Day・Melbourne Cup', 12:'Christmas・New Year\'s Eve' },
+  other: { 1:'元旦', 2:'農曆春節', 3:'國際婦女節', 4:'復活節', 5:'勞動節', 6:'端午節', 7:'暑期', 8:'暑期', 9:'中秋節', 10:'萬聖節', 11:'感恩節', 12:'聖誕節' }
+};
+
+// ── 主生成函式 ──
+async function generate() {
+  const gasUrl = gasInput.value.trim();
+  const region = document.getElementById('region').value;
+  const localEvents = document.getElementById('local-events').value.trim();
+  const taiwanNews = document.getElementById('taiwan-news').value.trim();
+  const platforms = [...document.getElementById('platform-group').querySelectorAll('.chip.active')].map(c => c.dataset.val);
+  const freq = document.getElementById('freq-group').querySelector('.chip.active').dataset.val;
+  const tone = document.getElementById('tone-group').querySelector('.chip.active').dataset.val;
+
+  if (platforms.length === 0) { alert('請至少選擇一個平台'); return; }
+
+  const month = new Date().getMonth() + 1;
+  const localFestivals = festivalDB[region]?.[month] || '';
+
+  const planBody = document.getElementById('plan-body');
+  const genBtn = document.getElementById('gen-btn');
+
+  genBtn.disabled = true;
+  planBody.innerHTML = `<div class="loading">正在生成本週內容計畫<span class="dots"></span></div>`;
+
+  // 組裝 prompt
+  const prompt = `你是一位資深的台灣外交公關顧問，專門協助駐外人員規劃社群媒體內容。
+
+請為以下情境規劃「本週社群媒體內容計畫」：
+
+【駐地】${document.getElementById('region').options[document.getElementById('region').selectedIndex].text}
+【當地本月節慶/背景】${localFestivals}
+【本週當地特殊時事】${localEvents || '（無特殊時事）'}
+【本週台灣相關新聞】${taiwanNews || '（無特殊新聞）'}
+【主力平台】${platforms.join('、')}
+【每週目標則數】${freq} 則
+【語氣風格】${tone}
+
+請規劃 ${freq} 則貼文，每則需包含：
+1. 建議發文日（週一到週日）
+2. 內容主題標題（20字內）
+3. 核心切角（台灣視角如何連結當地受眾，1-2句）
+4. 第一句話鉤子（吸引人繼續看的開場句）
+5. 建議發布平台
+6. 優先度（高/中/低）
+
+請嚴格以以下 JSON 格式回應，不要加任何說明文字或 markdown：
+{
+  "week_label": "本週計畫（月/日－月/日）",
+  "posts": [
+    {
+      "day": "週一",
+      "title": "...",
+      "angle": "...",
+      "hook": "...",
+      "platforms": ["Facebook"],
+      "priority": "高"
+    }
+  ]
+}`;
+
+  try {
+    let data;
+
+    if (!gasUrl) {
+      // Demo 模式：用預設範例展示格式
+      data = getDemoData(region, localFestivals, freq, platforms);
+    } else {
+      // 真實模式：透過 GAS proxy 呼叫 Claude API
+      const res = await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+      });
+      if (!res.ok) throw new Error(`GAS 回應錯誤：${res.status}`);
+      const raw = await res.json();
+      data = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    }
+
+    renderPlan(data, platforms);
+
+  } catch (err) {
+    planBody.innerHTML = `
+      <div class="error-box">
+        <strong>⚠ 生成失敗</strong><br><br>
+        ${err.message}<br><br>
+        <strong>可能原因：</strong><br>
+        • GAS 網址未填或格式有誤<br>
+        • GAS 部署設定需要重新授權<br>
+        • Claude API Key 未設定在 GAS 中<br><br>
+        如需測試介面，請清空 GAS 網址欄位，系統會以示範模式運行。
+      </div>
+    `;
+  }
+
+  genBtn.disabled = false;
+}
+
+// ── 渲染計畫卡片 ──
+function renderPlan(data, platforms) {
+  const planBody = document.getElementById('plan-body');
+  const priorityClass = { '高': 'high', '中': 'med', '低': 'low' };
+
+  let html = `
+    <div class="week-header">
+      <span>${data.week_label || '本週計畫'}</span>
+      <button class="save-btn" id="save-btn" onclick="saveToSheets()">📊 存進 Google Sheets</button>
+    </div>
+  `;
+
+  (data.posts || []).forEach((post, i) => {
+    const pc = priorityClass[post.priority] || 'med';
+    const priorityBadge = post.priority === '高'
+      ? `<span class="badge badge-hot">優先 ★</span>`
+      : `<span class="badge">${post.priority || '中'}</span>`;
+
+    const platformBadges = (post.platforms || platforms).map(p => `<span class="badge">${p}</span>`).join('');
+
+    // 組裝跳轉到文宣產生器的 URL
+    const firstPlatform = (post.platforms || platforms)[0] || 'Facebook';
+    const topicGuess = guessTopicFromTitle(post.title);
+    const params = new URLSearchParams({
+      topic: topicGuess,
+      detail: post.hook,           // 用 hook 當作初稿起點最自然
+      platform: firstPlatform,
+      from: 'planner'              // 讓文宣產生器知道是從計畫帶過來的
+    });
+    const diploUrl = `../diplo-content/?${params.toString()}`;
+
+    html += `
+      <div class="post-card ${pc}" data-index="${i}">
+        <div class="card-meta">
+          <span class="card-day">${post.day}</span>
+          <div class="card-badges">${priorityBadge}${platformBadges}</div>
+        </div>
+        <div class="card-title">${post.title}</div>
+        <div class="card-hook">「${post.hook}」</div>
+        <div class="card-platforms">切角：${post.angle}</div>
+        <div class="card-action">
+          <a href="${diploUrl}" class="draft-btn" target="_blank">✍ 去產文案 →</a>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `<div class="saved-notice" id="saved-notice">✅ 已成功存入 Google Sheets，館長與小編皆可開啟查看。</div>`;
+
+  planBody.innerHTML = html;
+  window._currentPlan = data;
+}
+
+// ── 根據標題猜測 topic 類型（讓文宣產生器預選正確類型）──
+function guessTopicFromTitle(title) {
+  if (!title) return 'event';
+  const t = title;
+  if (/節慶|節日|中秋|端午|春節|新年|聖誕|halloween|festival/i.test(t)) return 'festival';
+  if (/政策|法案|成就|半導體|健保|外交|援助|捐款/i.test(t)) return 'policy';
+  if (/不實|澄清|謠言|誤解|回應/i.test(t)) return 'crisis';
+  return 'event';
+}
+
+// ── 存進 Google Sheets ──
+async function saveToSheets() {
+  const gasUrl = gasInput.value.trim();
+  if (!gasUrl) {
+    alert('請先填入 GAS 網址才能儲存至 Google Sheets');
+    return;
+  }
+  if (!window._currentPlan) return;
+
+  const saveBtn = document.getElementById('save-btn');
+  saveBtn.disabled = true;
+  saveBtn.textContent = '存檔中…';
+
+  try {
+    const res = await fetch(gasUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'save', plan: window._currentPlan })
+    });
+    if (!res.ok) throw new Error(`存檔失敗：${res.status}`);
+    document.getElementById('saved-notice').style.display = 'block';
+    saveBtn.textContent = '✅ 已存檔';
+  } catch (err) {
+    saveBtn.disabled = false;
+    saveBtn.textContent = '📊 存進 Google Sheets';
+    alert('存檔失敗：' + err.message);
+  }
+}
+
+// ── Demo 模式（未設定 GAS URL 時使用） ──
+function getDemoData(region, festivals, freq, platforms) {
+  const today = new Date();
+  const mon = new Date(today);
+  mon.setDate(today.getDate() - today.getDay() + 1);
+  const sun = new Date(mon);
+  sun.setDate(mon.getDate() + 6);
+  const fmt = d => `${d.getMonth()+1}/${d.getDate()}`;
+
+  const demos = [
+    { day:'週一', title:'台灣人的中秋節為什麼要烤肉？', angle:'從台灣獨特習俗切入，呼應當地月亮節慶概念', hook:'你知道台灣人把賞月節變成全民烤肉節了嗎？', platforms:[platforms[0]||'Facebook'], priority:'高' },
+    { day:'週二', title:'台灣半導體如何影響你的日常生活', angle:'科技供應鏈切入，連結當地民眾使用的消費電子產品', hook:'你手上的每支手機，很可能都跟台灣有關係', platforms:[platforms[0]||'Facebook'], priority:'高' },
+    { day:'週三', title:`${festivals} × 台灣元素怎麼玩？`, angle:'借勢當地節慶，加入台灣文化視角製造話題性', hook:`今年的 ${festivals} ，我們從台灣角度來看…`, platforms:platforms.slice(0,2), priority:'中' },
+    { day:'週五', title:'台灣便當文化：職人精神的日常縮影', angle:'食物切入，展現台灣職人文化與細節美學', hook:'一個便當，可以說完一個台灣故事', platforms:[platforms[1]||'Instagram'], priority:'中' },
+    { day:'週六', title:'你不知道的台灣：登山文化大爆發', angle:'戶外生活趨勢，呼應當地戶外運動風潮', hook:'台灣有將近兩百座超過三千公尺的山…', platforms:platforms, priority:'低' },
+    { day:'週四', title:'台灣食物地圖：每個城市的必吃', angle:'觀光吸引力切入，建立台灣美食國際形象', hook:'在台灣，每個城市都有自己不能錯過的那一味', platforms:[platforms[0]||'Facebook'], priority:'中' },
+    { day:'週日', title:'週末快問快答：你對台灣的印象是？', angle:'互動貼文，蒐集當地民眾對台灣的認知，也是輿情觀測', hook:'我們有個問題想問你…', platforms:platforms, priority:'低' },
+  ];
+
+  return {
+    week_label: `本週計畫（${fmt(mon)}－${fmt(sun)}）【示範模式】`,
+    posts: demos.slice(0, parseInt(freq))
+  };
+}
+</script>
+</body>
+</html>
