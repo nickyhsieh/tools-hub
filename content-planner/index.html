@@ -704,11 +704,6 @@ function guessTopicFromTitle(title) {
 
 // ── 存進 Google Sheets ──
 async function saveToSheets() {
-  const gasUrl = gasInput.value.trim();
-  if (!gasUrl) {
-    alert('請先填入 GAS 網址才能儲存至 Google Sheets');
-    return;
-  }
   if (!window._currentPlan) return;
 
   const saveBtn = document.getElementById('save-btn');
@@ -716,12 +711,17 @@ async function saveToSheets() {
   saveBtn.textContent = '存檔中…';
 
   try {
-    const res = await fetch(gasUrl, {
+    const res = await fetch('/.netlify/functions/save-to-sheets', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'save', plan: window._currentPlan })
+      body: JSON.stringify({ plan: window._currentPlan })
     });
-    if (!res.ok) throw new Error(`存檔失敗：${res.status}`);
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `存檔失敗：${res.status}`);
+    }
+
     document.getElementById('saved-notice').style.display = 'block';
     saveBtn.textContent = '✅ 已存檔';
   } catch (err) {
